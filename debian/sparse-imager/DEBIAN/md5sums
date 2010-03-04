@@ -1,0 +1,8 @@
+62665b572d8f7a7e1ce312aa35e05a4a  usr/share/doc/sparse-imager/changelog.Debian.gz
+b4531de240e0658d9083273a2fa33b0b  usr/share/doc/sparse-imager/README.Debian
+27b8aacdaf4df58d3ef254c9398101af  usr/share/doc/sparse-imager/copyright
+9f868e818cc1f9da9033f822a10037f0  usr/share/doc/sparse-imager/dbschema.sql
+4116febed872a4682fc8aedc87cfb945  usr/local/sparse-imager/bin/xnbd-bgctl
+2a3487457aab16d447ce7b2d9305d468  usr/local/sparse-imager/bin/database.py
+7a8b156ff202ef07375e1a06b4b604b9  usr/local/sparse-imager/bin/xnbd-server
+0d5314f2ad4546477961ccf00254acd7  usr/local/sparse-imager/bin/broadcast_listener

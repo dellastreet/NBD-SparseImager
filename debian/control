@@ -1,0 +1,18 @@
+Source: sparse-imager
+Section: unknown
+Priority: extra
+Maintainer: Ruud Schramp <ruud@schramp.com>
+Build-Depends: debhelper (>= 7), libglib2.0-dev
+Standards-Version: 3.8.1
+Homepage: <insert the upstream URL, if relevant>
+
+Package: sparse-imager
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, python, python-mysqldb ,libglib2.0-0 
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
+
+Package: sparse-imager-doc
+Architecture: all
+Description: documentation for sparse-imager
+ <insert long description, indented with spaces>
