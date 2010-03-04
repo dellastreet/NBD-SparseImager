@@ -1,3 +1,27 @@
+nbd-forensic-imager is a modification to nbdsrv (see notice below).
+It is a read-only verion of the nbdsrv application. Read-Only makes
+it useless for a real block device, but allows making binary copies of
+disks without risking writing any data to the disk.
+
+The read-only part is deliberately not implemented as a command line
+switch. Not having the 'write' code makes sure it will never happen.
+
+Also a 'broadcast' feature is added to make identification of hosts running
+this software easier. It will periodically send a UDP broadcast on port 9999.
+This allows for zero configuration clients.
+
+Also full disk support is added. The original code would by default offer the first 
+partition, disallowing access to the boot block and partition table. This implementation
+will by default offer the full disk.
+
+
+The additions are (C) 2010 dellastreet@live.nl
+nbdsrvr is (C) 2003 by folkert@vanheusden.com
+
+
+Original readme below
+========================================================================================
+
 nbdsrvr is (C) 2003 by folkert@vanheusden.com
 New versions can be obtained from: http://www.vanheusden.com/ (browse to the
 "microsoft windows software" section).
