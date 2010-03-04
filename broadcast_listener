@@ -1,15 +1,19 @@
 #!/usr/bin/python
 import pcap
+import os
 import sys
 import string
 import time
 import socket
 import struct
-import database.py
+
+import imagerdb
 
 protocols={socket.IPPROTO_TCP:'tcp',
            socket.IPPROTO_UDP:'udp',
            socket.IPPROTO_ICMP:'icmp'}
+
+ImgDB=imagerdb.ImagerDb()
 
 def decode_ip_packet(s):
   d={}
@@ -51,6 +55,7 @@ def print_packet(pktlen, data, timestamp):
 
     system_id=MAC +  "_" + decoded['source_address']
     print system_id
+    ImgDB.seensystem(system_id,decoded['source_address'])
  
 
 if __name__=='__main__':
@@ -65,6 +70,9 @@ if __name__=='__main__':
   p.open_live(dev, 1600, 0, 100)
   #p.dump_open('dumpfile')
   p.setfilter(string.join(sys.argv[2:],' '), 0, 0)
+
+  #run as www user
+  os.setuid(33)
 
   # try-except block to catch keyboard interrupt.  Failure to shut
   # down cleanly can result in the interface not being taken out of promisc.
@@ -85,6 +93,7 @@ if __name__=='__main__':
     # p.next() returns a (pktlen, data, timestamp) tuple 
     #  apply(print_packet,p.next())
   except KeyboardInterrupt:
+    del ImgDB
     print '%s' % sys.exc_type
     print 'shutting down'
     print '%d packets received, %d packets dropped, %d packets dropped by interface' % p.stats()

@@ -1,7 +1,7 @@
 Source: sparse-imager
 Section: unknown
 Priority: extra
-Maintainer: Ruud Schramp <ruud@schramp.com>
+Maintainer: Della Street <dellastreet@live.nl>
 Build-Depends: debhelper (>= 7), libglib2.0-dev
 Standards-Version: 3.8.1
 Homepage: <insert the upstream URL, if relevant>
