@@ -1,0 +1,50 @@
+body{
+margin: 0;
+background: #557446;
+font-family: verdana, arial, helvetica, sans-serif;
+color: #CFDACA;
+font-size: 80%;
+}
+
+div#container{
+width: 100%;
+height: 100%;
+}
+
+div#logo{
+width: 100px;
+height: 100px;
+background: #CFDACA;
+color: #557446;
+text-align: center;
+padding: 20px 0 0 0;
+float: left;
+clear: right;
+}
+
+div#header{
+width: 100%;
+height: 100px;
+background: #CFDACA;
+color: #557446;
+text-align: center;
+padding: 20px 0 0 0;
+float: top;
+}
+
+div#nav_container{
+width: 100px;
+margin: 50px 20px 0 20px;
+border-top: 1px solid #CFDACA;
+border-left: 1px solid #CFDACA;
+padding: 7px;
+float: left;
+}
+
+div#sub_content{
+width: 200px;
+margin: 50px 20px 0 20px;
+border-top: 1px solid #CFDACA;
+border-left: 1px solid #CFDACA;
+padding: 7px;
+float: right;

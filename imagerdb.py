@@ -32,7 +32,7 @@ class ImagerDb:
 			row = self.cursor.fetchone ()
 	def seensystem(self,name,ip):
 		print "update/insert"
-		self.cursor.execute ("INSERT INTO systems (name, ipadress,currentstate,requestedstate,seenat) VALUES (\"" + name + "\",\"" + ip + "\",'active','active',NOW()) ON DUPLICATE KEY UPDATE currentstate=if(currentstate='dead','active',currentstate),seenat=NOW()")
+		self.cursor.execute ("INSERT INTO systems (name, ipadress,currentstate,requestedstate,seenat) VALUES (\"" + name + "\",\"" + ip + "\",'active','active',NOW()) ON DUPLICATE KEY UPDATE currentstate=if(currentstate='dead','active',currentstate),requestedstate=if(requestedstate='dead','active',requestedstate),seenat=NOW()")
  
 	def requeststate(self,name,state):
 		print "update/insert"

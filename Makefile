@@ -19,5 +19,8 @@ install: all
 	
 	
 	install -D -o 33 -m 400 www/status.php ${DESTDIR}/var/www/spim/ 
-	install -D -o 33 -m 400 www/db.php ${DESTDIR}/var/www/spim/ 
+	install -D -o 33 -m 400 www/database.php ${DESTDIR}/var/www/spim/
+	install -D -o 33 -m 400 www/config.php ${DESTDIR}/var/www/spim/
+	install -D -o 33 -m 400 www/navigation.php ${DESTDIR}/var/www/spim/
+	install -D -o 33 -m 400 www/style.css ${DESTDIR}/var/www/spim/
 	install -D -o 33 -m 400 www/images/DiskTransparantSmall.png ${DESTDIR}/var/www/spim/img/
