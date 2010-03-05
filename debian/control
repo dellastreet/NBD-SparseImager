@@ -8,9 +8,15 @@ Homepage: <insert the upstream URL, if relevant>
 
 Package: sparse-imager
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, python, python-mysqldb ,libglib2.0-0 
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Depends: ${shlibs:Depends}, ${misc:Depends}, python, python-mysqldb ,libglib2.0-0, php5
+Description: A disk imaging solution for creating partial, sparse, binary images of windows machines for forensic analysis. 
+ NBD-SparseImager is a solution for imaging medium quantities of hard-disks for forensic analysis.
+ The solution is intended to solve the folowing problems:
+    * Disks get bigger all the time
+    * Full imaging of several 1T disks becomes inpractical in terms of storage
+    * Full imaging of several 1T disks becomes inpractical in terms of time
+    * Depending on the type of investigation not all data is as relevant (e.g. content of dll’s and executables in general are not that relevant)
+ 
 
 Package: sparse-imager-doc
 Architecture: all
