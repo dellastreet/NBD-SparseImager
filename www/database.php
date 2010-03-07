@@ -22,7 +22,6 @@ class ImageDatabase
     public function expire() {
         global $expiretime;
         $query="UPDATE systems SET requestedstate='dead' WHERE (NOW()-seenat)>".$expiretime.";";  
-	echo $query;
 	$result=mysql_query($query) or die ("Failed ".$query);
 	echo $result;
     }
