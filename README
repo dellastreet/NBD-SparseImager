@@ -1,0 +1,135 @@
+NBD-SparseImager
+================
+
+What is it
+^^^^^^^^^^
+
+NBD-SparseImager is a solution for imaging medium quantities of hard-disks for forensic analysis.
+
+The solution is intended to solve the folowing problems:
+
+    * Disks get bigger all the time
+    * Full imaging of several 1T disks becomes inpractical in terms of storage
+    * Full imaging of several 1T disks becomes inpractical in terms of time
+    * Depending on the type of investigation not all data is as relevant (e.g. content of dll’s and executables in general are not that relevant)
+
+
+How it works
+^^^^^^^^^^^^
+
+Use a system under investigation side NBD block server in combination
+with a serverside NBD-client to do server side investigation of the
+disk. All interpretation of the disk is performed server side.
+
+****************************              ****************************
+*  Client PC:              *              * Server:                  *
+*                          *      TCP     * web-gui                  *
+*                          * <----------> * forensic tools           *
+*  nbd-forensic-imager.exe *              * nbd-proxy                *
+*                          *              * nbd-client               *
+****************************              ****************************
+
+
+Manual proof of concept
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Ingredients
+~~~~~~~~~~~
+
+* Windows PC
+     * nbd-forensic-imager.exe
+* Linux PC
+     * tcpdump
+     * xndb-server
+     * ndb-client (user space tool)
+     * nbd kernel block device module
+     * sleuthkit
+
+Procedure
+~~~~~~~~~
+
+Start nbd-forensic-imager.exe on the windows machine in a CMD shell.
+
+Rest of the steps are done on the linux box.
+
+1) Start tcpdump to detect the host:
+
+sudo tcpdump -vv -n -e -X udp and port 9999
+tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 96 bytes
+11:47:57.803852 00:0c:76:5e:2a:27 > ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 61: (tos 0x0, ttl 128, id 38957, offset 0, flags [none], proto UDP (17), length 47)
+    192.168.0.122.1683 > 255.255.255.255.9999: [udp sum ok] UDP, length 19
+	0x0000:  4500 002f 982d 0000 8011 e16e c0a8 007a  E../.-.....n...z
+	0x0010:  ffff ffff 0693 270f 001b 0857 4e42 445f  ......'....WNBD_
+	0x0020:  464f 5245 4e53 4943 5f49 4d41 4745 52    FORENSIC_IMAGER
+
+This could of course been done by using ipconfig on the windows box, but the idea is to get this zero-config.
+
+2) Note the IP adress: 192.168.0.122, also note the MAC adress (used informational mostly but can be used to distinguish hosts when one would image lots of machines while carrying a 'server' laptop to several private networks resulting in IP adress collisions.
+
+3) setup the xndb-server in proxy mode
+sudo /usr/local/sparse-imager/bin/xnbd-server --proxy --readonly 192.168.0.122 6666 /tmp/192.168.0.122_00:0c:76:5e:2a:27.img /tmp/192.168.0.122_00:0c:76:5e:2a:27.bit
+xnbd-server(4534) msg: readonly enabled
+xnbd-server(4534) msg: cmd proxy mode
+xnbd-server(4534) msg: use default bgctlprefix /tmp/xnbd-bg.ctl
+xnbd-server(4534) msg: remote size: 81964302336 bytes (78167 MBytes)
+xnbd-server(4534) msg: bitmap file /tmp/192.168.0.122_00:0c:76:5e:2a:27.bit (2501352 bytes = 625338 arrays of 4 bytes), 20010816 nbits
+xnbd-server(4534) msg: bitmap file /tmp/192.168.0.122_00:0c:76:5e:2a:27.bit zero-cleared
+xnbd-server(4534) msg: proxymode mode 192.168.0.122 6666 cache /tmp/192.168.0.122_00:0c:76:5e:2a:27.img cachebitmap /tmp/192.168.0.122_00:0c:76:5e:2a:27.bit
+xnbd-server(4534) msg: xnbd master initialization done
+xnbd-server(4534) msg: listen at [0.0.0.0]:8520
+xnbd-server(4534) msg: start polling
+
+4) setup the ndb-client as block device to the local xndb-server
+sudo nbd-client localhost 8520 /dev/nbd0 
+Negotiation: ..size = 80043264KB
+bs=1024, sz=80043264
+
+
+5) Check the size of the local image files:
+ls -aul /tmp/192*
+-rw------- 1 root root     2501352 2010-03-09 11:54 /tmp/192.168.0.122_00:0c:76:5e:2a:27.bit
+-rw------- 1 root root 81964302336 2010-03-09 11:54 /tmp/192.168.0.122_00:0c:76:5e:2a:27.img
+
+6) check the REAL size of the local image files:
+du -h /tmp/192*
+2.4M	/tmp/192.168.0.122_00:0c:76:5e:2a:27.bit
+8.0K	/tmp/192.168.0.122_00:0c:76:5e:2a:27.img
+
+7) Optionaly dissable read ahead caching
+sudo echo 0 >/sys/block/nbd0/queue/read_ahead_kb
+
+7) Run some tool agains the block device and check the size:
+
+fls /dev/nbd0p1 >/dev/null
+du -h /tmp/192*
+2.4M	/tmp/192.168.0.122_00:0c:76:5e:2a:27.bit
+228K	/tmp/192.168.0.122_00:0c:76:5e:2a:27.img
+fls -r /dev/nbd0p1 > /dev/null
+du -h /tmp/192*
+2.4M	/tmp/192.168.0.122_00:0c:76:5e:2a:27.bit
+228M	/tmp/192.168.0.122_00:0c:76:5e:2a:27.img
+
+8) mount it and browse it.
+sudo mount -o ro,force /dev/nbd0p1 /mnt/somedir
+
+9) run some tools on the local copy
+> sudo fls -o 63 /tmp/192.168.0.122_00:0c:76:5e:2a:27.img
+
+The -o 63 is to skip the partition table
+As the command fls had already been run on the nbd0p1 device the data needed to complete is allready in the file!
+
+> sudo icat -o 63 /tmp/192.168.0.122_00:0c:76:5e:2a:27.img   [fill in some inode from the fls] | hexdump -C
+
+This would give 'all zero's'
+
+> sudo icat -o 63 /dev/nbd0p1 [fill in the same inode from the fls] | hexdump -C
+
+This would give the content of the file
+
+> sudo icat -o 63 /tmp/192.168.0.122_00:0c:76:5e:2a:27.img   [fill in the same inode from the fls] | hexdump -C
+
+This time it would give the content of the file instead of the 'all zero's'
+
+
+
+The task at hand: automate!
