@@ -683,6 +683,7 @@ static struct option longopts[] = {
 	{"daemonize", no_argument, NULL, 'd'},
 	{"readonly", no_argument, NULL, 'r'},
 	{"cow", no_argument, NULL, 'c'},
+	{"pidfile", required_argument, NULL, 'P'},
 	{"logpath", required_argument, NULL, 'L'},
 	{NULL, 0, NULL, 0},
 };
@@ -740,6 +741,7 @@ int main(int argc, char **argv) {
 	int daemonize = 0;
 	int readonly = 0;
 	int cow = 0;
+	const char *pidfilepath = "/var/run/xnbd-server.pid";
 	const char *logpath = NULL;
 	int logfd = -1;
 
@@ -760,7 +762,7 @@ int main(int argc, char **argv) {
 		int c;
 		int index = 0;
 
-		c = getopt_long(argc, argv, "tphvl:B:G:drcL:", longopts, &index);
+		c = getopt_long(argc, argv, "tphvl:B:G:drcP:L:", longopts, &index);
 		if (c == -1)
 			break;
 
@@ -824,6 +826,10 @@ int main(int argc, char **argv) {
 				info("copy-on-write enabled");
 				break;
 
+			case 'P':
+				pidfilepath = optarg;
+				info("pid file %s", pidfilepath);
+				break;
 			case 'L':
 				logpath = optarg;
 				info("log file %s", logpath);
@@ -926,6 +932,15 @@ int main(int argc, char **argv) {
 		close(logfd);
 	}
 
+	if (daemonize) {
+		int pidfd = open(pidfilepath, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
+		if (pidfd < 0)
+			err("open %s, %m", pidfilepath);
+		char pidbuffer[64];
+		int len = snprintf(pidbuffer,63,"%u\n",getpid());
+		write(pidfd,pidbuffer,len);
+		close(pidfd);
+	}
 
 
 	master_server(lport, (void *) &xnbd);
