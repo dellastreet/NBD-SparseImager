@@ -7,6 +7,7 @@ import time
 
 import imagerdb
 import daemon
+import mounter
 
 ImgDB=imagerdb.ImagerDb()
 
@@ -19,9 +20,37 @@ ImgDB=imagerdb.ImagerDb()
 
 def pollChange():
     print "POLL"
+    ImgDB.expirestate(30)
+    ImgDB.listsystems()
+    change=ImgDB.getchange_request()
+    if (change is None):
+        return 0
+    print change
+    (name, ip, currentstate, reqstate)=change
+    newcurrentstate=currentstate
+    if (reqstate=="dead"):
+	if (currentstate=='active'):
+            newcurrentstate='dead'
+        if (currentstate=='blockconnected'):
+            mounter.dettach_blockdevice(0)
+            newcurrentstate='active'
+    if (reqstate=='active'):
+	if (currentstate=='dead'):
+	    ImgDB.requeststate(name,"blockconnected")
+	    newcurrentstate='active'
+        if (currentstate=='blockconnected'):
+            mounter.dettach_blockdevice(0)
+            newcurrentstate='active'
+    if (reqstate=='blockconnected'):
+	if (currentstate=='dead'):
+		newcurrentstate='active'
+	if (currentstate=='active'):
+		mounter.attach_blockdevice(0,ip,6666,"/tmp/"+name)
+		newcurrentstate='blockconnected'
 
+    ImgDB.setcurrentstate(name,newcurrentstate)
 #nothin to do
-    return 0
+    return 1
 
 def pollChanges():
     while (pollChange()): pass

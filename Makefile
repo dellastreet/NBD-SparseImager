@@ -14,6 +14,7 @@ install: all
 	install -D -m 555 imagerdb.py ${DESTDIR}/usr/local/sparse-imager/bin/
 	install -D -m 555 daemon.py ${DESTDIR}/usr/local/sparse-imager/bin/
 	install -D -m 555 mounter.py ${DESTDIR}/usr/local/sparse-imager/bin/
+	install -D -m 555 mount_daemon ${DESTDIR}/usr/local/sparse-imager/bin/
 	install -D -m 555 broadcast_listener ${DESTDIR}/usr/local/sparse-imager/bin/
 	install -D -m 555 xnbd/trunk/xnbd-bgctl ${DESTDIR}/usr/local/sparse-imager/bin/
 	install -D -m 555 xnbd/trunk/xnbd-server ${DESTDIR}/usr/local/sparse-imager/bin/

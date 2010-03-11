@@ -32,7 +32,7 @@ class ImagerDb:
 			row = self.cursor.fetchone ()
 	def seensystem(self,name,ip):
 		print "update/insert"
-		self.cursor.execute ("INSERT INTO systems (name, ipadress,currentstate,requestedstate,seenat) VALUES (\"" + name + "\",\"" + ip + "\",'active','active',NOW()) ON DUPLICATE KEY UPDATE currentstate=if(currentstate='dead','active',currentstate),requestedstate=if(requestedstate='dead','active',requestedstate),seenat=NOW()")
+		self.cursor.execute ("INSERT INTO systems (name, ipadress,currentstate,requestedstate,seenat) VALUES (\"" + name + "\",\"" + ip + "\",'active','active',NOW()) ON DUPLICATE KEY UPDATE requestedstate=if(currentstate='dead' and requestedstate='dead','active',requestedstate),seenat=NOW()")
  
 	def requeststate(self,name,state):
 		print "update/insert"
@@ -44,12 +44,17 @@ class ImagerDb:
 
 	def expirestate(self,sec):
 		print "update/insert"
-		self.cursor.execute ("UPDATE systems SET requestedstate='dead' WHERE (NOW()-seenat)>"+sec+";")
+		self.cursor.execute ("UPDATE systems SET requestedstate='dead' WHERE (NOW()-seenat)>"+str(sec)+";")
+
+	def getchange_request(self):
+		self.cursor.execute ("SELECT name,ipadress,currentstate,requestedstate FROM systems where currentstate <> requestedstate LIMIT 1");
+		row = self.cursor.fetchone ()
+		return row
 
 if __name__=='__main__':
 	X=ImagerDb()
 	X.listsystems()
-	X.expirestate("2")
+	X.expirestate(2)
 	X.listsystems()
 	X.seensystem("1234_1.2.3.4","1.2.3.4")
 	X.listsystems()
