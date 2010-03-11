@@ -11,11 +11,12 @@ install: all
 	install -d ${DESTDIR}/var/www/spim/img/
 	install -d ${DESTDIR}/etc/init.d/
 	
-	install -D -m 540 imagerdb.py ${DESTDIR}/usr/local/sparse-imager/bin/
-	install -D -m 540 daemon.py ${DESTDIR}/usr/local/sparse-imager/bin/
-	install -D -m 540 broadcast_listener ${DESTDIR}/usr/local/sparse-imager/bin/
-	install -D -m 540 xnbd/trunk/xnbd-bgctl ${DESTDIR}/usr/local/sparse-imager/bin/
-	install -D -m 540 xnbd/trunk/xnbd-server ${DESTDIR}/usr/local/sparse-imager/bin/
+	install -D -m 555 imagerdb.py ${DESTDIR}/usr/local/sparse-imager/bin/
+	install -D -m 555 daemon.py ${DESTDIR}/usr/local/sparse-imager/bin/
+	install -D -m 555 mounter.py ${DESTDIR}/usr/local/sparse-imager/bin/
+	install -D -m 555 broadcast_listener ${DESTDIR}/usr/local/sparse-imager/bin/
+	install -D -m 555 xnbd/trunk/xnbd-bgctl ${DESTDIR}/usr/local/sparse-imager/bin/
+	install -D -m 555 xnbd/trunk/xnbd-server ${DESTDIR}/usr/local/sparse-imager/bin/
 	
 	install -D -m 500 dbschema.sql ${DESTDIR}/usr/share/doc/sparse-imager/
 	
