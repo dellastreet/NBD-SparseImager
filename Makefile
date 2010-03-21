@@ -24,6 +24,7 @@ install: all
 	
 	
 	install -D -o 33 -m 400 www/status.php ${DESTDIR}/var/www/spim/ 
+	install -D -o 33 -m 400 www/remove.php ${DESTDIR}/var/www/spim/ 
 	install -D -o 33 -m 400 www/index.php ${DESTDIR}/var/www/spim/ 
 	install -D -o 33 -m 400 www/database.php ${DESTDIR}/var/www/spim/
 	install -D -o 33 -m 400 www/config.php ${DESTDIR}/var/www/spim/
@@ -32,4 +33,5 @@ install: all
 	install -D -o 33 -m 400 www/images/DiskTransparantSmall.png ${DESTDIR}/var/www/spim/img/
 	install -D -o 33 -m 400 windows/nbd-forensic-imager.exe ${DESTDIR}/var/www/spim/windows/
 	
-	install -D -m 540 startup/broadcast_listener ${DESTDIR}/etc/init.d/
+	install -D -m 555 startup/broadcast_listener ${DESTDIR}/etc/init.d/
+	install -D -m 555 startup/mount_daemon ${DESTDIR}/etc/init.d/

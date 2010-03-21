@@ -4,12 +4,12 @@ import os
 import sys
 import string
 import time
+import syslog
 
 import imagerdb
 import daemon
 import mounter
 
-ImgDB=imagerdb.ImagerDb()
 
 #Unfortunately this tool is now running as root.
 #Any suggestions to make interaction with 
@@ -19,9 +19,7 @@ ImgDB=imagerdb.ImagerDb()
 # safer is welcomed
 
 def pollChange():
-    print "POLL"
     ImgDB.expirestate(30)
-    ImgDB.listsystems()
     change=ImgDB.getchange_request()
     if (change is None):
         return 0
@@ -45,7 +43,7 @@ def pollChange():
 	if (currentstate=='dead'):
 		newcurrentstate='active'
 	if (currentstate=='active'):
-		mounter.attach_blockdevice(0,ip,6666,"/tmp/"+name)
+		mounter.attach_blockdevice(0,ip,7000,"/tmp/"+name)
 		newcurrentstate='blockconnected'
 
     ImgDB.setcurrentstate(name,newcurrentstate)
@@ -69,6 +67,8 @@ if __name__=='__main__':
 
   if (options.daemon):
       retCode = daemon.createDaemon(options.pidfile)
+
+  ImgDB=imagerdb.ImagerDb()
 
   try :
     while(1):

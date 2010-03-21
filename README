@@ -67,14 +67,14 @@ This could of course been done by using ipconfig on the windows box, but the ide
 2) Note the IP adress: 192.168.0.122, also note the MAC adress (used informational mostly but can be used to distinguish hosts when one would image lots of machines while carrying a 'server' laptop to several private networks resulting in IP adress collisions.
 
 3) setup the xndb-server in proxy mode
-sudo /usr/local/sparse-imager/bin/xnbd-server --proxy --readonly 192.168.0.122 6666 /tmp/192.168.0.122_00:0c:76:5e:2a:27.img /tmp/192.168.0.122_00:0c:76:5e:2a:27.bit
+sudo /usr/local/sparse-imager/bin/xnbd-server --proxy --readonly 192.168.0.122 7000 /tmp/192.168.0.122_00:0c:76:5e:2a:27.img /tmp/192.168.0.122_00:0c:76:5e:2a:27.bit
 xnbd-server(4534) msg: readonly enabled
 xnbd-server(4534) msg: cmd proxy mode
 xnbd-server(4534) msg: use default bgctlprefix /tmp/xnbd-bg.ctl
 xnbd-server(4534) msg: remote size: 81964302336 bytes (78167 MBytes)
 xnbd-server(4534) msg: bitmap file /tmp/192.168.0.122_00:0c:76:5e:2a:27.bit (2501352 bytes = 625338 arrays of 4 bytes), 20010816 nbits
 xnbd-server(4534) msg: bitmap file /tmp/192.168.0.122_00:0c:76:5e:2a:27.bit zero-cleared
-xnbd-server(4534) msg: proxymode mode 192.168.0.122 6666 cache /tmp/192.168.0.122_00:0c:76:5e:2a:27.img cachebitmap /tmp/192.168.0.122_00:0c:76:5e:2a:27.bit
+xnbd-server(4534) msg: proxymode mode 192.168.0.122 7000 cache /tmp/192.168.0.122_00:0c:76:5e:2a:27.img cachebitmap /tmp/192.168.0.122_00:0c:76:5e:2a:27.bit
 xnbd-server(4534) msg: xnbd master initialization done
 xnbd-server(4534) msg: listen at [0.0.0.0]:8520
 xnbd-server(4534) msg: start polling

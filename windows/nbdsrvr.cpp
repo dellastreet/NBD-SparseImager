@@ -452,7 +452,7 @@ int main(int argc, char *argv[])
 	dest.sin_addr.S_un.S_addr   = INADDR_BROADCAST;
 
 	filename="\\\\.\\PHYSICALDRIVE0";
-	portnr=6666;
+	portnr=7000;
 	printf("Based on nbdsrvr v0.2, (C) 2003 by folkert@vanheusden.com\n");
 	printf("nbd-forensic-imager v0.1, (C) 2010 by dellastreet@live.nl\n");
 
