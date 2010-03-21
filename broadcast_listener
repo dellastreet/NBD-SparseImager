@@ -15,8 +15,6 @@ protocols={socket.IPPROTO_TCP:'tcp',
            socket.IPPROTO_UDP:'udp',
            socket.IPPROTO_ICMP:'icmp'}
 
-ImgDB=imagerdb.ImagerDb()
-
 def decode_ip_packet(s):
   d={}
   d['version']=(ord(s[0]) & 0xf0) >> 4
@@ -87,6 +85,7 @@ if __name__=='__main__':
 
   #run as www user
   os.setuid(33)
+  ImgDB=imagerdb.ImagerDb()
 
   # try-except block to catch keyboard interrupt.  Failure to shut
   # down cleanly can result in the interface not being taken out of promisc.
