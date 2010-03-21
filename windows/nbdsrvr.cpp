@@ -7,6 +7,8 @@ int portnr;
 char *filename;
 int part_nr = -1;
 
+sockaddr_in  dest;
+
 int error_mapper(DWORD winerr)
 {
 	switch(winerr){
@@ -150,7 +152,7 @@ DWORD WINAPI clientthread(LPVOID data)
 	// find length of file or starting offset of partition
 	memset(&offset, 0x00, sizeof(offset));
 	memset(&fsize, 0x00, sizeof(fsize));
-	if (strnicmp(filename, "\\\\.\\PHYSICALDRIVE", 17) == 0)	/* disk */
+	if (_strnicmp(filename, "\\\\.\\PHYSICALDRIVE", 17) == 0)	/* disk */
 	{
 		if (part_nr<0)
 		{ //No partition given, assume full disk
@@ -415,7 +417,7 @@ DWORD WINAPI broadcast_thread(LPVOID data)
 	SOCKET broadcast_connh;
 	BOOL bOptVal = TRUE;
     int bOptLen = sizeof(BOOL);
-    int iOptVal;
+    int iOptVal=1;
     int iOptLen = sizeof(int);
 
 	broadcast_connh= socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -423,13 +425,13 @@ DWORD WINAPI broadcast_thread(LPVOID data)
 		fprintf(stderr,"Failed to set SO_BROADCAST\n", iOptVal);
 	};
 
-	sockaddr_in  dest;
-	dest.sin_family = AF_INET;
-	dest.sin_port   = htons(9999);
-	dest.sin_addr.S_un.S_addr   = INADDR_BROADCAST;
 	for(;;)
 	{
-		sendto(broadcast_connh,"NBD_FORENSIC_IMAGER",19,0,(const sockaddr *) &dest,sizeof(dest));
+		int sentbytes = sendto(broadcast_connh,"NBD_FORENSIC_IMAGER",19,0,(const sockaddr *) &dest,sizeof(dest));
+		if (sentbytes==SOCKET_ERROR) {
+			int err;
+			printf("Broadcast error WSAGetLastError: %d\n",err=WSAGetLastError());
+		}
 		Sleep(10000);
 	};
 
@@ -441,21 +443,42 @@ int main(int argc, char *argv[])
 	SOCKET newconnh;
 	WSADATA WSAData;
 
+	// initialize WinSock library
+	(void)WSAStartup(0x101, &WSAData); 
+
+	memset(&dest,0,sizeof (sockaddr_in));
+	dest.sin_family = AF_INET;
+	dest.sin_port   = htons(9999);
+	dest.sin_addr.S_un.S_addr   = INADDR_BROADCAST;
+
 	filename="\\\\.\\PHYSICALDRIVE0";
 	portnr=6666;
 	printf("Based on nbdsrvr v0.2, (C) 2003 by folkert@vanheusden.com\n");
 	printf("nbd-forensic-imager v0.1, (C) 2010 by dellastreet@live.nl\n");
 
-	fprintf(stderr, "Usage: %s file portnr [partitionnumber]\n", argv[0]);
-	if (argc>=2)
-		filename = argv[1];
-	if (argc>=3)
-		portnr = atoi(argv[2]);
-	if (argc>=4)
-		part_nr = atoi(argv[3]);
-
-	// initialize WinSock library
-	(void)WSAStartup(0x101, &WSAData); 
+	for (int argnr=1;argnr<argc;argnr++)
+	{
+		if (strcmp(argv[argnr],"-b")==0) {
+			argnr++;
+			if (argnr<argc)
+				dest.sin_addr.S_un.S_addr = inet_addr(argv[argnr]);
+		} else if (strcmp(argv[argnr],"-f")==0) {
+			argnr++;
+			if (argnr<argc)
+				filename = argv[argnr];
+		} else if (strcmp(argv[argnr],"-p")==0) {
+			argnr++;
+			if (argnr<argc)
+				portnr = atoi(argv[argnr]);
+		} else if (strcmp(argv[argnr],"-P")==0) {
+			argnr++;
+			if (argnr<argc)
+				part_nr = atoi(argv[argnr]);
+		} else {
+			fprintf(stderr, "Usage: %s [-f file] [-p portnr] [-P partitionnumber] [-b broadcast/announce address]\n", argv[0]);
+			exit(-1);
+		};
+	};
 
 	DWORD broadcast_tid;
 	CreateThread(NULL, 0, broadcast_thread, 0, 0, &broadcast_tid);
