@@ -19,7 +19,7 @@ import mounter
 # safer is welcomed
 
 def pollChange():
-    ImgDB.expirestate(30)
+    ImgDB.expirestate(60*5)
     change=ImgDB.getchange_request()
     if (change is None):
         return 0
