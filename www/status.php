@@ -25,7 +25,6 @@
 <table>
 
 <?
-$db->expire("2");
 
 $query="SELECT * FROM systems";
 $result=mysql_query($query);
@@ -37,13 +36,11 @@ while ($row = mysql_fetch_assoc($result)) {
 <TD><? echo $row["ipadress"]?></TD>
 <TD><? echo $row["currentstate"]?></TD>
 <TD><? echo $row["requestedstate"]?></TD>
+<TD><A href="remove.php?name=<? echo urlencode($row["name"])?>">remove</A></TD>
 </TR>
 <?
 }
 
-
-//DEBUG STATEMENT! Should be done from task-running app
-$db->changestates();
 ?>
 </table>
 
