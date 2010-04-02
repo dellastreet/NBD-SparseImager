@@ -133,3 +133,18 @@ This time it would give the content of the file instead of the 'all zero's'
 
 
 The task at hand: automate!
+
+
+
+Install
+^^^^^^^
+
+Unfortunately I haven't come to adding a password or making that configurable:
+
+databasename: imager
+user: root
+password: ""
+
+create database imager;
+
+mysql -u root imager <dbschema.sql
