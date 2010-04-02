@@ -31,7 +31,12 @@ class ImagerDb:
 			print row
 			row = self.cursor.fetchone ()
 	def seensystem(self,name,ip):
+		self.cursor.execute ("SELECT count(*) from systems where name=\""+ name + "\";");
+		row = self.cursor.fetchone()
+		newitem=row[0]==0
+		
 		self.cursor.execute ("INSERT INTO systems (name, ipadress,currentstate,requestedstate,seenat) VALUES (\"" + name + "\",\"" + ip + "\",'active','active',NOW()) ON DUPLICATE KEY UPDATE requestedstate=if(currentstate='dead' and requestedstate='dead','active',requestedstate),seenat=NOW()")
+		return newitem
  
 	def requeststate(self,name,state):
 		print "update/insert"
@@ -49,6 +54,9 @@ class ImagerDb:
 		self.cursor.execute ("SELECT name,ipadress,currentstate,requestedstate FROM systems where currentstate <> requestedstate LIMIT 1");
 		row = self.cursor.fetchone ()
 		return row
+
+	def AddDefaultTasks(self,system_id):
+		self.cursor.execute ("INSERT INTO tasks (name, defaulttask_id, state) SELECT \""+system_id+"\" as name, id as defaulttask_id, 'idle' as state from defaulttasks")
 
 if __name__=='__main__':
 	X=ImagerDb()

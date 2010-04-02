@@ -148,3 +148,15 @@ password: ""
 create database imager;
 
 mysql -u root imager <dbschema.sql
+
+
+
+Documentation
+^^^^^^^^^^^^^
+
+Why three python scripts?
+
+The need different permissions to work. 
+
+The mounter for now needs root permissions.
+

@@ -54,7 +54,10 @@ def print_packet(pktlen, data, timestamp):
     decoded=decode_ip_packet(data[14:])
 
     system_id=MAC +  "_" + decoded['source_address']
-    ImgDB.seensystem(system_id,decoded['source_address'])
+    if (ImgDB.seensystem(system_id,decoded['source_address'])):
+	# New system
+	print "New system"
+	ImgDB.AddDefaultTasks(system_id)
  
 
 if __name__=='__main__':

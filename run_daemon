@@ -1,0 +1,62 @@
+#!/usr/bin/python
+from optparse import OptionParser
+import os
+import sys
+import string
+import time
+import syslog
+
+import imagerdb
+import daemon
+import mounter
+
+
+#Unfortunately this tool is now running as root.
+#Any suggestions to make interaction with 
+# * nbd-client
+# * nbd-server --proxy
+# 
+# safer is welcomed
+
+def pollChange():
+    task=ImgDB.getrunnable_task()
+    if (task is None):
+        return 0
+    task=ImgDB.setrun_taskstate(task,"running")
+    sleep(100);
+    task=ImgDB.setrun_taskstate(task,"finished")
+
+#nothin to do
+    return 1
+
+def pollChanges():
+    while (pollChange()): pass
+	
+
+
+if __name__=='__main__':
+  parser = OptionParser()
+  parser.add_option("-p", "--pidfile", dest="pidfile",default="/var/run/mount_daemon.pid",
+                  help="file to store the daemon processid", metavar="FILE")
+  parser.add_option("-d", "--no_daemon",
+                  action="store_false", dest="daemon", default=True,
+                  help="start in foreground")
+
+  (options, args) = parser.parse_args()
+
+  if (options.daemon):
+      retCode = daemon.createDaemon(options.pidfile)
+
+  ImgDB=imagerdb.ImagerDb()
+
+  try :
+    while(1):
+	time.sleep(1)
+	pollChanges()
+
+  except KeyboardInterrupt:
+    del ImgDB
+    print '%s' % sys.exc_type
+    print 'shutting down'
+  
+
