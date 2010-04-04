@@ -13,11 +13,12 @@ import mounter
 
 def pollChange():
     task=ImgDB.getrunnable_task()
+    print task
     if (task is None):
         return 0
-    task=ImgDB.setrun_taskstate(task,"running")
-    sleep(100);
-    task=ImgDB.setrun_taskstate(task,"finished")
+    ImgDB.setrun_taskstate(task,"running")
+    time.sleep(10);
+    ImgDB.setrun_taskstate(task,"finished")
 
 #nothin to do
     return 1

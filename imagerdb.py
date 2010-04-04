@@ -43,11 +43,11 @@ class ImagerDb:
 		self.cursor.execute ("UPDATE systems SET requestedstate='"+state+"' WHERE name=\""+name+"\";")
 
 	def setcurrentstate(self,name,state):
-		print "update/insert"
+		print "update/insert setcurrentstate "+name+" "+state
 		self.cursor.execute ("UPDATE systems SET currentstate='"+state+"' WHERE name=\""+name+"\";")
 
 	def expirestate(self,sec):
-		print "update/insert"
+		print "update/insert expirestate "+str(sec)
 		self.cursor.execute ("UPDATE systems SET requestedstate='dead' WHERE (NOW()-seenat)>"+str(sec)+";")
 
 	def getchange_request(self):
@@ -59,7 +59,13 @@ class ImagerDb:
 		self.cursor.execute ("INSERT INTO tasks (name, defaulttask_id, state) SELECT \""+system_id+"\" as name, id as defaulttask_id, 'idle' as state from defaulttasks")
 
 	def getrunnable_task(self):
-		self.cursor.execute ("SELECT tasks.* from tasks,systems where systems.name=tasks.name and tasks.state='idle' and systems.currentstate='blockmounted' LIMIT 1;")
+		self.cursor.execute ("SELECT tasks.* from tasks,systems where systems.name=tasks.name and tasks.state='idle' and systems.currentstate='blockconnected' LIMIT 1;")
+		row = self.cursor.fetchone ()
+                return row
+
+	def setrun_taskstate(self,task,state):
+		self.cursor.execute ("UPDATE tasks set state='"+state+"' where id="+str(task[0])+";");
+		
 
 if __name__=='__main__':
 	X=ImagerDb()
