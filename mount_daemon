@@ -43,6 +43,7 @@ def pollChange():
 	if (currentstate=='dead'):
 		newcurrentstate='active'
 	if (currentstate=='active'):
+		print "Mounting"
 		mounter.attach_blockdevice(0,ip,7000,"/tmp/"+name)
 		newcurrentstate='blockconnected'
 

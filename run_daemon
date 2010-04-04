@@ -11,13 +11,6 @@ import daemon
 import mounter
 
 
-#Unfortunately this tool is now running as root.
-#Any suggestions to make interaction with 
-# * nbd-client
-# * nbd-server --proxy
-# 
-# safer is welcomed
-
 def pollChange():
     task=ImgDB.getrunnable_task()
     if (task is None):

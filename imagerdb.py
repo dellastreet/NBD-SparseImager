@@ -35,7 +35,7 @@ class ImagerDb:
 		row = self.cursor.fetchone()
 		newitem=row[0]==0
 		
-		self.cursor.execute ("INSERT INTO systems (name, ipadress,currentstate,requestedstate,seenat) VALUES (\"" + name + "\",\"" + ip + "\",'active','active',NOW()) ON DUPLICATE KEY UPDATE requestedstate=if(currentstate='dead' and requestedstate='dead','active',requestedstate),seenat=NOW()")
+		self.cursor.execute ("INSERT INTO systems (name, ipadress,currentstate,requestedstate,seenat) VALUES (\"" + name + "\",\"" + ip + "\",'dead','active',NOW()) ON DUPLICATE KEY UPDATE requestedstate=if(currentstate='dead' and requestedstate='dead','active',requestedstate),seenat=NOW()")
 		return newitem
  
 	def requeststate(self,name,state):
@@ -57,6 +57,9 @@ class ImagerDb:
 
 	def AddDefaultTasks(self,system_id):
 		self.cursor.execute ("INSERT INTO tasks (name, defaulttask_id, state) SELECT \""+system_id+"\" as name, id as defaulttask_id, 'idle' as state from defaulttasks")
+
+	def getrunnable_task(self):
+		self.cursor.execute ("SELECT tasks.* from tasks,systems where systems.name=tasks.name and tasks.state='idle' and systems.currentstate='blockmounted' LIMIT 1;")
 
 if __name__=='__main__':
 	X=ImagerDb()

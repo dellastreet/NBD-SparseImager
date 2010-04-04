@@ -31,7 +31,7 @@ def dettach_blockdevice(devnr):
 		pidfile.close()
 	        os.kill(int(pidstr),15) #TERM
 		os.unlink("/tmp/nbd"+str(devnr) +".pid")
-	except IOError, e:
+	except (OSError ,IOError) as  e:
 		syslog.syslog("dettach_blockdevice(%d)    %s (%d)" % (devnr,e.strerror, e.errno))
 
 	

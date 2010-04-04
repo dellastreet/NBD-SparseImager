@@ -38,9 +38,9 @@
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
-DAEMON=/usr/local/sparse-imager/bin/broadcast_listener # Introduce the server's location here
-NAME=broadcast_listener  # Introduce the short server's name here
-DESC="Sparse Imager application that listens for broadcast messages on the local network"            # Introduce a short description here
+DAEMON=/usr/local/sparse-imager/bin/run_daemon # Introduce the server's location here
+NAME=run_daemon  # Introduce the short server's name here
+DESC="Sparse Imager application that starts tasks on the attached block devices"            # Introduce a short description here
 LOGDIR=/var/log/sparse-imager  # Log directory to use
 
 PIDFILE=/var/run/$NAME.pid

@@ -37,3 +37,4 @@ install: all
 	
 	install -D -m 555 startup/broadcast_listener ${DESTDIR}/etc/init.d/
 	install -D -m 555 startup/mount_daemon ${DESTDIR}/etc/init.d/
+	install -D -m 555 startup/run_daemon ${DESTDIR}/etc/init.d/
