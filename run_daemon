@@ -9,6 +9,34 @@ import syslog
 import imagerdb
 import daemon
 import mounter
+import subprocess
+
+basemountpoint="/tmp/nbdmount/"
+
+def runPartition(task,devname):
+	global basemountpoint
+	env = os.environ
+	env["PART"]="/dev/"+devname
+        env["ROOT"]=basemountpoint+devname
+
+
+	cmd = [ task[9]]
+	print cmd
+	print env
+	print task
+	p = subprocess.call(cmd,env=env,shell=True)
+
+    
+def runPartitions(task,devnr):
+	partitions=open("/proc/partitions","r").read()
+	for part in partitions.split('\n'):
+		cols=part.split()
+		if (len(cols)>3):
+			if (string.find(cols[3],"nbd"+str(devnr)+"p")==0):
+				runPartition(task,cols[3])
+
+	ImgDB.setrun_taskstate(task,"finished")
+
 
 
 def pollChange():
@@ -16,9 +44,13 @@ def pollChange():
     print task
     if (task is None):
         return 0
-    ImgDB.setrun_taskstate(task,"running")
+    print task[8]
+    if (task[8]=="partition"):
+        runPartitions(task,0)
+    if (task[8]=="filesystem"):
+        runPartitions(task,0)
+#    ImgDB.setrun_taskstate(task,"running")
     time.sleep(10);
-    ImgDB.setrun_taskstate(task,"finished")
 
 #nothin to do
     return 1

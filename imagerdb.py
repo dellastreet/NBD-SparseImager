@@ -59,7 +59,7 @@ class ImagerDb:
 		self.cursor.execute ("INSERT INTO tasks (name, defaulttask_id, state) SELECT \""+system_id+"\" as name, id as defaulttask_id, 'idle' as state from defaulttasks")
 
 	def getrunnable_task(self):
-		self.cursor.execute ("SELECT tasks.* from tasks,systems where systems.name=tasks.name and tasks.state='idle' and systems.currentstate='blockconnected' LIMIT 1;")
+		self.cursor.execute ("SELECT tasks.*,defaulttasks.* from tasks,defaulttasks,systems where tasks.defaulttask_id=defaulttasks.id and systems.name=tasks.name and tasks.state='idle' and systems.currentstate='blockconnected' LIMIT 1;")
 		row = self.cursor.fetchone ()
                 return row
 

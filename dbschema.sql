@@ -20,8 +20,8 @@ CREATE TABLE defaulttasks (
 -- priority: lower is better
 
 INSERT into defaulttasks values (1,0,1,'partition', "fls -r $PART",true);
-INSERT into defaulttasks values (2,0,1,'filesystem', "find $ROOT -iname \*.log -exec cat '{}' \;",true);
-INSERT into defaulttasks values (3,0,1,'filesystem', "find $ROOT -iname \*.evt -exec cat '{}' \;",true);
+INSERT into defaulttasks values (2,0,1,'filesystem', "find $ROOT -iname \\*.log -exec cat '{}' \\;",true);
+INSERT into defaulttasks values (3,0,1,'filesystem', "find $ROOT -iname \\*.evt -exec cat '{}' \\;",true);
 
 CREATE TABLE tasks (
         id int PRIMARY KEY AUTO_INCREMENT,

@@ -8,6 +8,38 @@ import syslog
 
 baseport=6000
 baseexec_path="/usr/local/sparse-imager/bin/"
+basemountpoint="/tmp/nbdmount/"
+
+def mount_partition(device):
+	global basemountpoint
+	os.makedirs(basemountpoint+device)
+	cmd = [ "/bin/mount" ,"-o","ro", "/dev/"+device, basemountpoint+device]
+	print cmd
+	p = subprocess.call(cmd)
+	
+def umount_partition(device):
+	global basemountpoint
+	cmd = [ "/bin/umount" , "/dev/"+device]
+	print cmd
+	p = subprocess.call(cmd)
+	os.rmdir(basemountpoint+device)
+	
+def mount_partitions(devnr):
+	partitions=open("/proc/partitions","r").read()
+	for part in partitions.split('\n'):
+		cols=part.split()
+		if (len(cols)>3):
+			if (string.find(cols[3],"nbd"+str(devnr)+"p")==0):
+				mount_partition(cols[3])
+
+def umount_partitions(devnr):
+	partitions=open("/proc/partitions","r").read()
+	for part in partitions.split('\n'):
+		cols=part.split()
+		if (len(cols)>3):
+			if (string.find(cols[3],"nbd"+str(devnr)+"p")==0):
+				umount_partition(cols[3])
+
 
 def attach_blockdevice(devnr, ipaddress,port,imagename):
         global baseexec_path,baseport
@@ -19,8 +51,16 @@ def attach_blockdevice(devnr, ipaddress,port,imagename):
 	print cmd
 	p = subprocess.call(cmd)
 
+	mount_partitions(devnr)
+
+	
 	
 def dettach_blockdevice(devnr):
+	try:
+		umount_partitions(devnr)
+	except (OSError) as e:
+		syslog.syslog("dettach_blockdevice unmount (%d)    %s (%d)" % (devnr,e.strerror, e.errno))
+
 	cmd = [ "/sbin/nbd-client" ,"-d",  "/dev/nbd"+str(devnr)]
 	print cmd
 	p = subprocess.call(cmd)
@@ -43,8 +83,8 @@ def dettach_blockdevice(devnr):
 
 
 if __name__=='__main__':
-	attach_blockdevice(0,"192.168.0.122",7000,"/tmp/192.168.0.122")
+	umount_partitions(0)
+#	attach_blockdevice(0,"192.168.0.122",7000,"/tmp/192.168.0.122")
+	#time.sleep(10)
 
-	time.sleep(10)
-
-	dettach_blockdevice(0)
+#	dettach_blockdevice(0)

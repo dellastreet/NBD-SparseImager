@@ -11,6 +11,7 @@ install: all
 	install -d ${DESTDIR}/var/www/spim/img/
 	install -d ${DESTDIR}/var/www/spim/windows/
 	install -d ${DESTDIR}/etc/init.d/
+	install -d ${DESTDIR}/tmp/nbdmount/
 	
 	install -D -m 555 imagerdb.py ${DESTDIR}/usr/local/sparse-imager/bin/
 	install -D -m 555 daemon.py ${DESTDIR}/usr/local/sparse-imager/bin/
@@ -25,6 +26,7 @@ install: all
 	
 	
 	install -D -o 33 -m 400 www/status.php ${DESTDIR}/var/www/spim/ 
+	install -D -o 33 -m 400 www/tasks.php ${DESTDIR}/var/www/spim/ 
 	install -D -o 33 -m 400 www/remove.php ${DESTDIR}/var/www/spim/ 
 	install -D -o 33 -m 400 www/index.php ${DESTDIR}/var/www/spim/ 
 	install -D -o 33 -m 400 www/database.php ${DESTDIR}/var/www/spim/
